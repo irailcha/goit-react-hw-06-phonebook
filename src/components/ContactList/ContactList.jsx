@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './ContactList.styled';
-import {ContactStyle, ContactListStyle, BtnDeleteStyle} from './ContactList.styled'
+import { ContactStyle, ContactListStyle, BtnDeleteStyle } from './ContactList.styled';
+import { useSelector } from 'react-redux';
 
-const ContactList = ({ contacts, onDelete }) => {
+import { selectVisibleContacts } from '../../redux/selectors';
+
+const ContactList = ({onDelete}) => {
+  const visibleContacts = useSelector(selectVisibleContacts);
+
+
   return (
     <ContactListStyle>
-      {contacts.map(contact => (
+      {visibleContacts.map(contact => (
         <ContactStyle key={contact.id}>
           {contact.name} : {contact.number}
           <BtnDeleteStyle onClick={() => onDelete(contact.id)}>Delete</BtnDeleteStyle>
@@ -17,14 +23,8 @@ const ContactList = ({ contacts, onDelete }) => {
 }
 
 ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired
-    })
-  ).isRequired,
   onDelete: PropTypes.func.isRequired
 };
 
 export default ContactList;
+

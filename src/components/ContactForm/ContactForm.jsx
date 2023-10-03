@@ -4,24 +4,32 @@ import { StyledForm, StyledField, SubmitButton } from './ContactForm.styled';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { nanoid } from 'nanoid';
+import { addContact} from '../../redux/contactsSlice';
 
+import {  useDispatch } from 'react-redux';
 
 const userSchema = yup.object().shape({
   name: yup.string().required().label("Ім'я"),
   number: yup.string().required().label('Номер'),
 });
 
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  
+  
 
-const ContactForm = ({ addContact }) => {
+  const addContactHandler = (newContact) => {
+    dispatch(addContact(newContact));
+  };
+
   const onSubmit = (values, { resetForm }) => {
     const newContact = { ...values, id: nanoid() };
-    addContact(newContact);
+    addContactHandler(newContact);
     resetForm();
   };
- 
 
-return (
-  <Formik initialValues={{name:'', number:''}} validationSchema={userSchema} onSubmit={onSubmit}>
+  return (
+    <Formik initialValues={{name:'', number:''}} validationSchema={userSchema} onSubmit={onSubmit}>
     {({ handleSubmit, handleChange, values, errors }) => (
     <StyledForm autoComplete='off' onSubmit={handleSubmit}>
     <label htmlFor='name'> 
