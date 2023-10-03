@@ -1,30 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './ContactList.styled';
 import { ContactStyle, ContactListStyle, BtnDeleteStyle } from './ContactList.styled';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector} from 'react-redux';
+import { removeContact } from '../../redux/contactsSlice';
 import { selectVisibleContacts } from '../../redux/selectors';
 
-const ContactList = ({onDelete}) => {
+const ContactList = () => {
+  const dispatch = useDispatch();
   const visibleContacts = useSelector(selectVisibleContacts);
 
+  const deleteContactHandler = (contactId) => {
+    dispatch(removeContact(contactId));
+  };
 
   return (
     <ContactListStyle>
       {visibleContacts.map(contact => (
         <ContactStyle key={contact.id}>
           {contact.name} : {contact.number}
-          <BtnDeleteStyle onClick={() => onDelete(contact.id)}>Delete</BtnDeleteStyle>
+          <BtnDeleteStyle onClick={() => deleteContactHandler(contact.id)}>Delete</BtnDeleteStyle>
         </ContactStyle>
       ))}
     </ContactListStyle>
   );
 }
 
-ContactList.propTypes = {
-  onDelete: PropTypes.func.isRequired
-};
-
 export default ContactList;
+
 
