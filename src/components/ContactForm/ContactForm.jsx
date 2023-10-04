@@ -1,11 +1,11 @@
-
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { StyledForm, StyledField, SubmitButton } from './ContactForm.styled';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { nanoid } from 'nanoid';
 import { addContact } from '../../redux/contactsSlice';
-import { useDispatch } from 'react-redux';
+import { selectContacts } from '../../redux/selectors';
 
 const userSchema = yup.object().shape({
   name: yup.string().required().label("name"),
@@ -14,16 +14,20 @@ const userSchema = yup.object().shape({
 
 const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
 
   const addContactHandler = (values, { resetForm }) => {
     const newContact = { ...values, id: nanoid() };
+    if (contacts.find(contact => contact.name.toLowerCase() === values.name.toLowerCase() || contact.number === values.number)) {
+      return alert(`${values.name} or ${values.number} is already exist`)
+    }
     dispatch(addContact(newContact));
     resetForm();
   };
 
   return (
     <Formik initialValues={{ name: '', number: '' }} validationSchema={userSchema} onSubmit={addContactHandler}>
-      {({ handleSubmit, handleChange, values, errors }) => (
+      {({ handleSubmit }) => (
         <StyledForm autoComplete='off' onSubmit={handleSubmit}>
           <label htmlFor='name'> Name </label>
           <StyledField
@@ -46,8 +50,6 @@ const ContactForm = () => {
       )}
     </Formik>
   );
-
-
 };
 
 export default ContactForm;

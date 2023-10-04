@@ -14,21 +14,20 @@ import {
   REGISTER,
 } from 'redux-persist';
 
-const reducer = combineReducers({
-  contacts: contactsSlice,
-  filter: filterSlice,
-});
-
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
 }
 
-const persistedReducer = persistReducer(persistConfig, reducer);
+const persistedReducer = persistReducer(persistConfig, contactsSlice);
 
+const reducer = combineReducers({
+  contacts: persistedReducer,
+  filter: filterSlice,
+});
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
